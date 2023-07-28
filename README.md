@@ -18,11 +18,6 @@
 	a. Go to http://localhost:8080/
 	b. Login using airflow/airflow as log/pass
 	c. In web UI - Admin -> Connections -> `+`
-	d. Add S3 connection, name it `s3_conn` and pass `{"aws_access_key_id": "AKIAYRMVRRFXQ5DNUWGM", "aws_secret_access_key": "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"}` to Extra
-	e. Add Redshift connection, name it `redshift_conn_id` and fill inputs with:
-		Host: data-eng-test-cluster.ctfgtxaoukqr.eu-west-1.redshift.amazonaws.com
-		Port: 5439
-		Login: nikolay
-		Password: nikolay_P@ssw0rd_40_92
-		Schema: dev
+	d. Add S3 connection
+	e. Add Redshift connection
 4. Unpause DAG on the main page.
