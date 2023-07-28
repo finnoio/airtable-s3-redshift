@@ -1,4 +1,4 @@
-## Luko Airtable Events ETL
+## Airtable Events ETL
 
 
 ### Pipeline explanation
