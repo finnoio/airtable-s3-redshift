@@ -2,7 +2,7 @@ class SqlQueries:
 
 
     create_event = """
-        CREATE TABLE IF NOT EXISTS nikolay.event
+        CREATE TABLE IF NOT EXISTS event
         (
             id                      varchar(256) not null,
             created_at              timestamp,
@@ -35,7 +35,7 @@ class SqlQueries:
         """
 
     create_event_sequence = """
-        CREATE TABLE nikolay.event_sequence
+        CREATE TABLE event_sequence
         (
             event_id          varchar(256) not null,
             user_id           varchar(256),
@@ -96,7 +96,7 @@ class SqlQueries:
                ev.user_id AS user_id,
                LAG(ev.id) OVER (PARTITION BY ev.user_id ORDER BY ev.created_at)  AS event_previous_id,
                LEAD(ev.id) OVER (PARTITION BY ev.user_id ORDER BY ev.created_at) AS event_next_id
-        FROM nikolay.event ev
+        FROM event ev
         WHERE ev.user_id IS NOT NULL
         ;
         """
