@@ -26,7 +26,7 @@ def extract_events(run_dt) -> None:
     web_events = airtable.get_events_by_dt_range('Web events', from_dt, run_dt)
     for filename, events in {"app_events": app_events, "web_events": web_events}.items():
         hook.load_bytes(bytes(json.dumps(events).encode('UTF-8')),
-                        key=f'nikolay/raw-events/dt={from_dt}/{filename}.json',
+                        key=f'raw-events/dt={from_dt}/{filename}.json',
                         bucket_name='luko-data-eng-exercice',
                         replace=True)
 
@@ -39,9 +39,9 @@ def process_events(run_dt) -> None:
     """
     hook = S3Hook('s3_conn')
     from_dt = datetime.strftime(datetime.strptime(run_dt, '%Y-%m-%d') - timedelta(days=1), '%Y-%m-%d')
-    app_events = json.loads(hook.read_key(key=f'nikolay/raw-events/dt={from_dt}/app_events.json',
+    app_events = json.loads(hook.read_key(key=f'raw-events/dt={from_dt}/app_events.json',
                                           bucket_name='luko-data-eng-exercice'))
-    web_events = json.loads(hook.read_key(key=f'nikolay/raw-events/dt={from_dt}/web_events.json',
+    web_events = json.loads(hook.read_key(key=f'raw-events/dt={from_dt}/web_events.json',
                                           bucket_name='luko-data-eng-exercice'))
     # transform app events
     app_events_df = pd.json_normalize([event['fields'] for event in app_events['records']])
@@ -78,7 +78,7 @@ def process_events(run_dt) -> None:
     parquet_buffer = io.BytesIO()
     transformed_events_df.to_parquet(parquet_buffer, index=False)
     hook.load_bytes(parquet_buffer.getvalue(),
-                    key=f'nikolay/processed-events/dt={from_dt}/events.parquet',
+                    key=f'processed-events/dt={from_dt}/events.parquet',
                     bucket_name='luko-data-eng-exercice',
                     replace=True)
 
@@ -116,7 +116,7 @@ with DAG(
         s3_conn_id='s3_conn',
         increment_table='nikolay.event_inc',
         s3_bucket='luko-data-eng-exercice',
-        s3_key='nikolay/processed-events/dt={}/events.parquet'
+        s3_key='processed-events/dt={}/events.parquet'
     )
 
     check_data_in_events_inc_task = DataQualityOperator(
